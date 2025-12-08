@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-const options = { discriminatorKey: "role", timestamps: true };
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -42,7 +42,10 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
   },
-  options
+  {
+    discriminatorKey: "role",
+    timestamps: true,
+  }
 );
 
 const User = mongoose.model("User", userSchema);

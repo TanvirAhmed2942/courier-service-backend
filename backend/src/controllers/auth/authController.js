@@ -85,19 +85,24 @@ export const register = async (req, res) => {
         password: hashedPassword,
         phone,
         address: addressArray,
-        role: "agent",
         vehicle,
         vehicleNumber,
       });
     } else {
-      newUser = await User.create({
+      // For regular users and admins, use base User model
+      // Use constructor directly to avoid discriminator lookup issues
+      const userData = {
         name,
         email,
         password: hashedPassword,
         phone,
         address: addressArray,
-        role,
-      });
+        role: role, // Set role explicitly
+      };
+
+      // Use new User() and save() instead of create() to avoid discriminator lookup
+      newUser = new User(userData);
+      await newUser.save();
     }
 
     const token = await generateToken(newUser._id, res);

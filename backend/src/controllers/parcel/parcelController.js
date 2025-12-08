@@ -1,5 +1,6 @@
 import Parcel from "../../models/parcel/Parcel.js";
 export const createParcel = async (req, res) => {
+  console.log("Creating parcel: ", req.body);
   try {
     const { receiver, parcelType, parcelDescription, travelRoute } = req.body;
 
@@ -29,7 +30,7 @@ export const createParcel = async (req, res) => {
 
     // Create parcel
     const newParcel = await Parcel.create({
-      sender: req.user.id,
+      sender: req.user._id,
       receiver,
       parcelType,
       parcelDescription,
@@ -40,6 +41,7 @@ export const createParcel = async (req, res) => {
       message: "Parcel created successfully",
       data: newParcel,
     });
+    console.log("Parcel created successfully (createParcel): ", newParcel);
   } catch (error) {
     res.status(500).json({
       status: "error",

@@ -1,8 +1,18 @@
 import express from "express";
 import { createParcel } from "../../controllers/parcel/parcelController.js";
-import { authMiddleware } from "../../middleware/authMiddleware.js";
+import {
+  authMiddleware,
+  isUser,
+  isAgent,
+  isAdmin,
+  allowRoles,
+} from "../../middleware/authMiddleware.js";
 const router = express.Router();
 
-router.post("/create-parcel", authMiddleware, createParcel);
+//user
+router.post("/create-parcel", authMiddleware, isUser, createParcel);
+
+//admin
+// router.post("/assign-agent", authMiddleware, isAdmin, assignAgent);
 
 export default router;
