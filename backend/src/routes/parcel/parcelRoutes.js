@@ -5,6 +5,7 @@ import {
   getParcel,
   updateParcel,
   cancelParcel,
+  assignAgent,
 } from "../../controllers/parcel/parcelController.js";
 import {
   authMiddleware,
@@ -23,6 +24,6 @@ router.put("/update-parcel/:id", authMiddleware, isUser, updateParcel);
 router.patch("/cancel-parcel/:id", authMiddleware, isUser, cancelParcel);
 
 //admin
-// router.post("/assign-agent", authMiddleware, isAdmin, assignAgent);
+router.patch("/assign-agent/:id", authMiddleware, isAdmin, assignAgent);
 
 export default router;

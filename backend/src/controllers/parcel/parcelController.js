@@ -1,5 +1,5 @@
 import Parcel from "../../models/parcel/Parcel.js";
-
+import User from "../../models/user/User.js";
 export const createParcel = async (req, res) => {
   console.log("Creating parcel: ", req.body);
   try {
@@ -184,5 +184,66 @@ export const cancelParcel = async (req, res) => {
       error: error.message,
     });
     console.log("Error cancelling parcel (cancelParcel): ", error);
+  }
+};
+
+export const assignAgent = async (req, res) => {
+  console.log("Assigning agent: ", req.params.id);
+  console.log("Assigning agent: ", req.body);
+  try {
+    const parcel = await Parcel.findById(req.params.id);
+    if (!parcel) {
+      return res.status(404).json({
+        status: "error",
+        message: "Parcel not found",
+      });
+    }
+    if (!req.user.id.toString() === parcel.sender.toString()) {
+      return res.status(401).json({
+        status: "error",
+        message: "Unauthorized: You are not the sender of this parcel",
+      });
+    }
+    // if (parcel.assignedAgent) {
+    //   return res.status(400).json({
+    //     status: "error",
+    //     message: "Parcel already assigned to an agent",
+    //   });
+    // }
+    const agent = await User.findById(req.body.agent);
+    if (!agent) {
+      return res.status(404).json({
+        status: "error",
+        message: "Agent not found",
+      });
+    }
+    if (agent.role !== "agent") {
+      return res.status(400).json({
+        status: "error",
+        message: "User is not an agent",
+      });
+    }
+    const assignedAgent = await Parcel.findByIdAndUpdate(
+      req.params.id,
+      {
+        assignedAgent: agent._id,
+      },
+      {
+        new: true,
+      }
+    );
+    console.log("Agent assigned successfully (assignAgent): ", assignedAgent);
+    res.status(200).json({
+      status: "success",
+      message: "Agent assigned successfully",
+      data: assignedAgent,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Error assigning agent",
+      error: error.message,
+    });
+    console.log("Error assigning agent (assignAgent): ", error);
   }
 };
