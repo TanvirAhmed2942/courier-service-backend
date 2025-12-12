@@ -2,12 +2,21 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
+import http from "http";
 import userRoutes from "./routes/user/userRoutes.js";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth/authRoutes.js";
 import parcelRoutes from "./routes/parcel/parcelRoutes.js";
+import initializeSocket from "./socket/socket.js";
+
 const app = express();
 const port = process.env.PORT || 5000;
+
+// Create HTTP server from Express app
+const server = http.createServer(app);
+
+// Initialize Socket.IO with the HTTP server
+const io = initializeSocket(server);
 
 // Middleware
 app.use(express.json());
@@ -27,4 +36,8 @@ app.use((req, res) => {
   });
 });
 
-app.listen(port, () => console.log(`Server is running on port ${port}`));
+// Start server
+server.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+  console.log(`Socket.IO is ready for connections`);
+});
